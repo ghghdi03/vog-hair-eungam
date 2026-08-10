@@ -131,6 +131,13 @@
   .price-row .p-val{color:var(--c-text); font-variant-numeric:tabular-nums;}
   .price-note{font-size:11px; color:var(--c-text-muted); text-align:center; margin-top:10px;}
 
+  /* ---------- First-visit event ---------- */
+  .event-panel{border:1px solid var(--c-border); padding:48px 24px; text-align:center;}
+  .event-badge{display:inline-block; padding:5px 16px; border:1px solid var(--c-text); color:var(--c-text); font-family:var(--f-en-sans); font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; margin-bottom:18px;}
+  .event-panel h3{font-family:var(--f-kr-serif); font-weight:700; font-size:20px; line-height:1.4; color:var(--c-text); margin-bottom:14px;}
+  .event-desc{font-size:var(--fs-body); color:var(--c-text-body); line-height:var(--lh-body); max-width:38em; margin:0 auto 22px;}
+  .event-panel .btn{width:auto; display:inline-block; padding:0 28px;}
+
   /* ---------- Service item ---------- */
   .svc-item{margin-bottom:44px;}
   .svc-item:last-of-type{margin-bottom:0;}
@@ -291,6 +298,22 @@
     </div>
   </section>
 
+  <!-- ===== FIRST-VISIT EVENT ===== -->
+  <section id="event">
+    <div class="container">
+      <div class="head2 reveal">
+        <h2>첫 방문 이벤트</h2>
+        <span class="sub">event</span>
+      </div>
+      <div class="event-panel reveal">
+        <div class="event-badge">Event</div>
+        <h3>N예약 + N페이 결제 시<br>시술 최대 30% 할인</h3>
+        <p class="event-desc">네이버예약으로 예약하고 네이버페이로 결제하시면 시술 금액을 최대 30%까지 할인받으실 수 있습니다.</p>
+        <a class="btn" href="#" target="_blank" rel="noopener" data-ga-event="reserve_click" data-location="event" id="eventReserveLink">네이버예약하기</a>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== PRICE TABLE ===== -->
   <section id="price" style="background:var(--c-bg);">
     <div class="container">
@@ -386,7 +409,7 @@ const TEAM = [
   { name:"은진 디자이너", title:"디자이너", signature:"<strong>퍼스널 헤어 스타일 전문</strong><br>남성 · 댄디컷, 애즈펌, 가르마펌<br>여성 · 레이어드컷, C컬펌, S컬펌", photo:"images/designers/은진.jpg", reserve:"https://m.booking.naver.com/booking/13/bizes/154699/items/6972805?area=pll&lang=ko&theme=place" },
 ];
 
-const PRICE_TAB_LABELS = { CUT:"컷", DRY:"드라이", COLOR:"염색", PERM:"펌", HEATPERM:"열펌", CLINIC:"클리닉" };
+const PRICE_TAB_LABELS = { CUT:"컷", COLOR:"염색", PERM:"펌", HEATPERM:"열펌", CLINIC:"클리닉" };
 const PRICES = {
   CUT: { band:"CUT", items: [
     { name:"학생컷 (디자이너)", price:"18,000원" },
@@ -397,8 +420,6 @@ const PRICES = {
     { name:"여성컷 (원장·부원장)", price:"26,000원" },
     { name:"헤드스파컷 (디자이너)", price:"43,000원" },
     { name:"헤드스파컷 (원장·부원장)", price:"45,000원" },
-  ]},
-  DRY: { band:"DRY", items: [
     { name:"샴푸", price:"15,000원" },
     { name:"붙임머리·탈색 샴푸", price:"25,000원" },
     { name:"드라이", price:"25,000원", featured:true },
@@ -560,6 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderTeam();
   renderPricing();
   renderFaq();
+  document.getElementById('eventReserveLink').href = resolveReserveHref('');
   initReveal();
   initEventBinding();
 });
