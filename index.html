@@ -165,12 +165,33 @@
   .team-item .t-name{font-family:var(--f-kr-serif); font-weight:600; font-size:14.5px; color:var(--c-text);}
   .team-item .t-title{font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--c-text-muted); margin-top:3px;}
   .team-item-body{display:grid; grid-template-columns:38% 1fr; gap:14px; align-items:center;}
-  .team-item-media{aspect-ratio:3/4; overflow:hidden; background:var(--c-muted);}
+  .team-item-media{aspect-ratio:3/4; overflow:hidden; background:var(--c-muted); cursor:pointer;}
   .team-item-media img{width:100%; height:100%; object-fit:cover; filter:saturate(.75) contrast(.96);}
   .team-item-copy .sig{font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--c-text-faint); margin-bottom:6px;}
   .team-item-copy p.body{margin-bottom:14px; text-align:left; word-break:keep-all;}
   .team-item-copy p.body strong{display:inline-block; margin-bottom:4px; font-family:var(--f-kr-serif); font-weight:600; color:var(--c-text);}
   .team-item .btn{width:auto; display:inline-block; padding:0 22px;}
+
+  /* ---------- Designer profile modal ---------- */
+  .profile-modal{position:fixed; inset:0; z-index:100; display:none;}
+  .profile-modal.open{display:block;}
+  .profile-modal-overlay{position:absolute; inset:0; background:rgba(43,40,37,.55);}
+  .profile-modal-box{position:relative; z-index:1; background:var(--c-surface); max-width:480px; margin:40px auto; max-height:calc(100vh - 80px); overflow-y:auto; border:1px solid var(--c-border);}
+  .profile-modal-close{position:absolute; top:14px; right:14px; z-index:2; width:32px; height:32px; border:1px solid var(--c-border); background:var(--c-surface); color:var(--c-text); font-size:18px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .profile-modal-photo{aspect-ratio:3/4; overflow:hidden; background:var(--c-muted);}
+  .profile-modal-photo img{width:100%; height:100%; object-fit:cover; filter:saturate(.75) contrast(.96);}
+  .profile-modal-body{padding:28px 24px 32px;}
+  .profile-modal-name{font-family:var(--f-kr-serif); font-weight:600; font-size:20px; color:var(--c-text);}
+  .profile-modal-title{display:block; font-size:11px; color:var(--c-text-muted); margin-top:3px; text-transform:uppercase; letter-spacing:.06em;}
+  .profile-modal-section{margin-top:24px;}
+  .profile-modal-section h4{font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--c-text-faint); margin-bottom:10px;}
+  .profile-modal-sig p{font-size:var(--fs-body); line-height:var(--lh-body); color:var(--c-text-body); word-break:keep-all;}
+  .profile-modal-sig strong{display:inline-block; margin-bottom:4px; font-family:var(--f-kr-serif); font-weight:600; color:var(--c-text);}
+  .profile-modal-bio{font-size:var(--fs-body); line-height:var(--lh-body); color:var(--c-text-body); word-break:keep-all;}
+  .profile-modal-cert{list-style:none;}
+  .profile-modal-cert li{position:relative; padding-left:14px; font-size:11.5px; line-height:1.8; color:var(--c-text-body); word-break:keep-all;}
+  .profile-modal-cert li::before{content:'—'; position:absolute; left:0; color:var(--c-text-faint);}
+  .profile-modal .btn{width:auto; display:inline-block; padding:0 28px; margin-top:26px;}
 
   /* ---------- Map ---------- */
   .map-media{position:relative; aspect-ratio:4/3; overflow:hidden; background:var(--c-muted); filter:saturate(.6) contrast(.97);}
@@ -400,6 +421,31 @@
 
 </div>
 
+<div class="profile-modal" id="profileModal" aria-hidden="true">
+  <div class="profile-modal-overlay" id="profileModalOverlay"></div>
+  <div class="profile-modal-box" role="dialog" aria-modal="true">
+    <button class="profile-modal-close" id="profileModalClose" aria-label="닫기">&times;</button>
+    <div class="profile-modal-photo"><img id="profileModalPhoto" src="" alt="" onerror="this.style.display='none'; this.parentElement.style.background='var(--c-muted)';"></div>
+    <div class="profile-modal-body">
+      <div class="profile-modal-name" id="profileModalName"></div>
+      <span class="profile-modal-title" id="profileModalTitle"></span>
+      <div class="profile-modal-section profile-modal-sig">
+        <h4>signature style</h4>
+        <p id="profileModalSig"></p>
+      </div>
+      <div class="profile-modal-section">
+        <h4>designer's note</h4>
+        <p class="profile-modal-bio" id="profileModalBio"></p>
+      </div>
+      <div class="profile-modal-section" id="profileModalCertWrap">
+        <h4>certifications</h4>
+        <ul class="profile-modal-cert" id="profileModalCert"></ul>
+      </div>
+      <a class="btn" id="profileModalReserve" target="_blank" rel="noopener" data-ga-event="reserve_click" data-location="profile_modal">예약하기</a>
+    </div>
+  </div>
+</div>
+
 <script>
 const CONFIG = {
   telHref: "tel:02-359-6844",
@@ -420,11 +466,21 @@ const SERVICES = [
 
 // ⚠️ 디자이너별 시그니처 스타일이 확정되면 아래 값을 채워주세요.
 const TEAM = [
-  { name:"써니 대표원장", title:"대표원장", signature:"<strong>은평구 헤어 대표</strong><br>레이어드컷, 허쉬컷, C컬펌, S컬펌", photo:"images/designers/써니.jpg", reserve:"https://m.booking.naver.com/booking/13/bizes/154699/items/3008648?area=pll&lang=ko&theme=place" },
-  { name:"베키 부원장", title:"부원장", signature:"<strong>감성컷트&열펌 마스터</strong><br>남성 · 시스루댄디펌, 애즈펌, 가르마펌<br>여성 · 레이어드컷, S컬, C컬펌", photo:"images/designers/베키.jpg", reserve:"https://m.booking.naver.com/booking/13/bizes/154699/items/3326011?area=pll&lang=ko&theme=place" },
-  { name:"솔 디자이너", title:"디자이너", signature:"<strong>은평구 펌 만족도 1위</strong><br>남성 · 시스루 댄디펌, 애즈펌, 맨즈펌<br>여성 · 빌드펌, 단발C컬펌, 단발 CS컬펌, 레이어드펌", photo:"images/designers/솔.jpg", reserve:"https://m.booking.naver.com/booking/13/bizes/154699/items/2905804?area=pll&lang=ko&theme=place" },
-  { name:"주이 디자이너", title:"디자이너", signature:"<strong>트렌디 감성 스타일 전문</strong><br>남성 · 시스루댄디, 가르마펌, 애즈펌, 세미히피펌<br>여성 · 레이어드컷, 중단발레이어드컷, 굵은웨이브, 히피펌", photo:"images/designers/주이.jpg", reserve:"https://m.booking.naver.com/booking/13/bizes/154699/items/4635895?area=pll&lang=ko&theme=place" },
-  { name:"은진 디자이너", title:"디자이너", signature:"<strong>퍼스널 헤어 스타일 전문</strong><br>남성 · 댄디컷, 애즈펌, 가르마펌<br>여성 · 레이어드컷, C컬펌, S컬펌", photo:"images/designers/은진.jpg", reserve:"https://m.booking.naver.com/booking/13/bizes/154699/items/6972805?area=pll&lang=ko&theme=place" },
+  { name:"써니 대표원장", title:"대표원장", signature:"<strong>은평구 헤어 대표</strong><br>레이어드컷, 허쉬컷, C컬펌, S컬펌", photo:"images/designers/써니.jpg", reserve:"https://m.booking.naver.com/booking/13/bizes/154699/items/3008648?area=pll&lang=ko&theme=place",
+    bio:"가위가 머리카락을 스치는 소리, 손끝에서 전해지는 감각, 그리고 거울 속 환하게 빛나는 고객의 미소, 이 모든 순간이 모여 미용을 할 때 가장 행복한 순간이 된다. 처음엔 긴장한 얼굴로 앉았던 고객이 점점 편안해지고, 스타일이 완성될수록 반짝이는 눈빛을 볼 때, 나는 단순히 머리를 자르는 것이 아니라 자신감을 선물하고 있다는 걸 느낀다.<br><br>새로운 변화를 두려워하던 사람이 거울을 보고 만족스러운 미소를 지을 때, 그 감동이 나에게도 전해진다. 미용은 단순한 기술이 아니라 사람을 더 빛나게 하는 마법같은 일이다.",
+    certifications:["Vidal sassoon basic/classic complete","Wella, Lloreal, Shiseide, Aveda, milbon color key Diploma","KOREA TONI&GUY Basic / Classic","KOREA TONI&GUY Pre VARDERING","VOG Hair trend Cut / Color master Diploma"] },
+  { name:"베키 부원장", title:"부원장", signature:"<strong>감성컷트&열펌 마스터</strong><br>남성 · 시스루댄디펌, 애즈펌, 가르마펌<br>여성 · 레이어드컷, S컬, C컬펌", photo:"images/designers/베키.jpg", reserve:"https://m.booking.naver.com/booking/13/bizes/154699/items/3326011?area=pll&lang=ko&theme=place",
+    bio:"언제나 한결같은 마음으로 고객님만 생각하고, 고객님의 매력을 찾아 드리는 베키 부원장입니다.",
+    certifications:["Vidal sassoon basic/classic complete","Wella, Lloreal, Shiseide, Aveda, milbon color key Diploma","VOG Hair trend Cut / Color master Diploma"] },
+  { name:"솔 디자이너", title:"디자이너", signature:"<strong>은평구 펌 만족도 1위</strong><br>남성 · 시스루 댄디펌, 애즈펌, 맨즈펌<br>여성 · 빌드펌, 단발C컬펌, 단발 CS컬펌, 레이어드펌", photo:"images/designers/솔.jpg", reserve:"https://m.booking.naver.com/booking/13/bizes/154699/items/2905804?area=pll&lang=ko&theme=place",
+    bio:"정성스럽고 섬세한 손길로 고객님의 완벽한 스타일을 만들어 드리는 스타일리스트 솔입니다.",
+    certifications:["Vidal sassoon basic/classic complete","Wella, Lloreal, Shiseide, Aveda, milbon color key Diploma","VOG Hair trend Cut / Color master Diploma"] },
+  { name:"주이 디자이너", title:"디자이너", signature:"<strong>트렌디 감성 스타일 전문</strong><br>남성 · 시스루댄디, 가르마펌, 애즈펌, 세미히피펌<br>여성 · 레이어드컷, 중단발레이어드컷, 굵은웨이브, 히피펌", photo:"images/designers/주이.jpg", reserve:"https://m.booking.naver.com/booking/13/bizes/154699/items/4635895?area=pll&lang=ko&theme=place",
+    bio:"최상의 아름다움을 찾아드리기 위해 함께 고민하고 결과로 보답하는 주이 디자이너입니다.",
+    certifications:["Vidal sassoon basic/classic complete","Wella, Lloreal, Shiseide, Aveda, milbon color key Diploma","VOG Hair trend Cut / Color master Diploma"] },
+  { name:"은진 디자이너", title:"디자이너", signature:"<strong>퍼스널 헤어 스타일 전문</strong><br>남성 · 댄디컷, 애즈펌, 가르마펌<br>여성 · 레이어드컷, C컬펌, S컬펌", photo:"images/designers/은진.jpg", reserve:"https://m.booking.naver.com/booking/13/bizes/154699/items/6972805?area=pll&lang=ko&theme=place",
+    bio:"안녕하세요! 디자이너 은진입니다 :D<br>저는 개개인의 라이프스타일에 어울리는 포인트를 찾아 편하고 직관적인 디자인을 하는 것을 좋아합니다.<br>자연스럽지만 존재감 있는 헤어를 원하신다면 저를 믿고 맡겨주세요!<br>언제나 편안한 분위기로 고객님의 만족을 최우선으로 생각하는 디자이너가 되겠습니다 ^^",
+    certifications:["DEMI HEAD&SPA","DEMI personal color","DEMI primary","KERASTASE HEAD&SPA","KERASTASE essential seminar","L'Oreal color key","WELLA korea color craft","2023, 2024 16th·17th FRANKPROVOST HAIR CONTEST 창작 업스타일 은상"] },
 ];
 
 const PRICE_TAB_LABELS = { CUT:"컷", COLOR:"염색", PERM:"펌", HEATPERM:"열펌", CLINIC:"클리닉" };
@@ -511,7 +567,7 @@ function renderServices(){
 }
 
 function renderTeam(){
-  document.getElementById('teamList').innerHTML = TEAM.map(t => `
+  document.getElementById('teamList').innerHTML = TEAM.map((t,i) => `
     <div class="team-item reveal">
       <div class="team-item-head">
         <div>
@@ -520,7 +576,7 @@ function renderTeam(){
         </div>
       </div>
       <div class="team-item-body">
-        <div class="team-item-media"><img src="${t.photo}" alt="${t.name}" loading="lazy" onerror="this.parentElement.style.background='var(--c-muted)'; this.remove();"></div>
+        <div class="team-item-media" data-idx="${i}"><img src="${t.photo}" alt="${t.name}" loading="lazy" onerror="this.parentElement.style.background='var(--c-muted)'; this.remove();"></div>
         <div class="team-item-copy">
           <div class="sig">signature style</div>
           <p class="body">${t.signature}</p>
@@ -604,6 +660,50 @@ function initReveal(scopeEls){
   } else { els.forEach(el => el.classList.add('in')); }
 }
 
+function openProfileModal(t){
+  const modal = document.getElementById('profileModal');
+  const photoEl = document.getElementById('profileModalPhoto');
+  photoEl.style.display = '';
+  photoEl.parentElement.style.background = '';
+  photoEl.src = t.photo;
+  photoEl.alt = t.name;
+  document.getElementById('profileModalName').textContent = t.name;
+  document.getElementById('profileModalTitle').textContent = t.title;
+  document.getElementById('profileModalSig').innerHTML = t.signature;
+  document.getElementById('profileModalBio').innerHTML = t.bio || '';
+
+  const certWrap = document.getElementById('profileModalCertWrap');
+  const certList = document.getElementById('profileModalCert');
+  if(t.certifications && t.certifications.length){
+    certList.innerHTML = t.certifications.map(c => `<li>${c}</li>`).join('');
+    certWrap.style.display = '';
+  } else { certWrap.style.display = 'none'; }
+
+  document.getElementById('profileModalReserve').href = resolveReserveHref(t.reserve);
+  document.getElementById('profileModalReserve').setAttribute('data-designer', t.name);
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProfileModal(){
+  const modal = document.getElementById('profileModal');
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+function initProfileModal(){
+  document.getElementById('teamList').addEventListener('click', (e) => {
+    const media = e.target.closest('.team-item-media');
+    if(!media) return;
+    openProfileModal(TEAM[Number(media.dataset.idx)]);
+  });
+  document.getElementById('profileModalOverlay').addEventListener('click', closeProfileModal);
+  document.getElementById('profileModalClose').addEventListener('click', closeProfileModal);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeProfileModal(); });
+}
+
 function trackEvent(name, params){
   if(typeof window.gtag === 'function'){ window.gtag('event', name, params); } else { console.log('[GA4 event]', name, params); }
 }
@@ -627,6 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('eventReserveLink').href = resolveReserveHref('');
   initReveal();
   initEventBinding();
+  initProfileModal();
 });
 </script>
 
