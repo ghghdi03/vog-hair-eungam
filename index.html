@@ -178,8 +178,12 @@
   .profile-modal-overlay{position:absolute; inset:0; background:rgba(43,40,37,.55);}
   .profile-modal-box{position:relative; z-index:1; background:var(--c-surface); max-width:480px; margin:40px auto; max-height:calc(100vh - 80px); overflow-y:auto; border:1px solid var(--c-border);}
   .profile-modal-close{position:absolute; top:14px; right:14px; z-index:2; width:32px; height:32px; border:1px solid var(--c-border); background:var(--c-surface); color:var(--c-text); font-size:18px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;}
-  .profile-modal-photo{aspect-ratio:3/4; overflow:hidden; background:var(--c-muted);}
-  .profile-modal-photo img{width:100%; height:100%; object-fit:cover; filter:saturate(.75) contrast(.96);}
+  .profile-modal-photo{aspect-ratio:3/4; max-height:34vh; overflow:hidden; background:var(--c-muted);}
+  .profile-modal-photo img{width:100%; height:100%; object-fit:cover; object-position:center 22%; filter:saturate(.75) contrast(.96);}
+  .profile-modal-scrollcue{position:absolute; left:0; right:0; bottom:0; z-index:2; display:flex; align-items:center; justify-content:center; gap:5px; padding:14px 0 10px; background:linear-gradient(to top, var(--c-surface) 50%, rgba(255,255,255,0)); font-family:var(--f-en-sans); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--c-text-muted); pointer-events:none; transition:opacity .3s ease;}
+  .profile-modal-scrollcue.is-hidden{opacity:0;}
+  .profile-modal-scrollcue svg{animation:profileScrollBounce 1.4s ease-in-out infinite;}
+  @keyframes profileScrollBounce{0%,100%{transform:translateY(0);} 50%{transform:translateY(3px);}}
   .profile-modal-body{padding:28px 24px 32px;}
   .profile-modal-name{font-family:var(--f-kr-serif); font-weight:600; font-size:20px; color:var(--c-text);}
   .profile-modal-title{display:block; font-size:11px; color:var(--c-text-muted); margin-top:3px; text-transform:uppercase; letter-spacing:.06em;}
@@ -426,6 +430,10 @@
   <div class="profile-modal-box" role="dialog" aria-modal="true">
     <button class="profile-modal-close" id="profileModalClose" aria-label="닫기">&times;</button>
     <div class="profile-modal-photo"><img id="profileModalPhoto" src="" alt="" onerror="this.style.display='none'; this.parentElement.style.background='var(--c-muted)';"></div>
+    <div class="profile-modal-scrollcue" id="profileModalScrollCue">
+      <span>더 보기</span>
+      <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
     <div class="profile-modal-body">
       <div class="profile-modal-name" id="profileModalName"></div>
       <span class="profile-modal-title" id="profileModalTitle"></span>
@@ -684,6 +692,13 @@ function openProfileModal(t){
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+
+  const box = document.querySelector('.profile-modal-box');
+  const cue = document.getElementById('profileModalScrollCue');
+  box.scrollTop = 0;
+  requestAnimationFrame(() => {
+    cue.classList.toggle('is-hidden', box.scrollHeight <= box.clientHeight + 8);
+  });
 }
 
 function closeProfileModal(){
@@ -701,6 +716,9 @@ function initProfileModal(){
   });
   document.getElementById('profileModalOverlay').addEventListener('click', closeProfileModal);
   document.getElementById('profileModalClose').addEventListener('click', closeProfileModal);
+  document.querySelector('.profile-modal-box').addEventListener('scroll', (e) => {
+    if(e.target.scrollTop > 16){ document.getElementById('profileModalScrollCue').classList.add('is-hidden'); }
+  });
   document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeProfileModal(); });
 }
 
