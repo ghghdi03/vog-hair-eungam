@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ghghdi03.github.io/vog-hair-eungam/sitemap.xml
+Sitemap: https://vog-hair-eungam.vercel.app/sitemap.xml
