@@ -181,12 +181,12 @@
   .hero-media img{width:100%; height:100%; object-fit:cover; filter:saturate(.75) contrast(.96);}
   .hero-media-cap{
     position:absolute; left:0; right:0; bottom:0; z-index:1; margin:0;
-    padding:28px 20px 16px;
-    background:linear-gradient(180deg, rgba(20,17,14,0) 40%, rgba(20,17,14,.68) 100%);
+    padding:26px 18px 16px;
+    background:linear-gradient(180deg, rgba(20,17,14,0) 35%, rgba(20,17,14,.7) 100%);
     color:#fff; text-align:center;
   }
-  .hero-media-cap .hmc-title{font-size:12px; font-weight:600; letter-spacing:.02em; line-height:1.6; margin-bottom:8px;}
-  .hero-media-cap .hmc-body{font-size:10.5px; color:rgba(255,255,255,.82); line-height:1.75; max-width:34ch; margin:0 auto;}
+  .hero-media-cap .hmc-title{font-size:12px; font-weight:600; letter-spacing:.02em; line-height:1.55; margin-bottom:8px; word-break:keep-all;}
+  .hero-media-cap .hmc-body{font-size:10px; color:rgba(255,255,255,.82); line-height:1.65; max-width:34ch; margin:0 auto; word-break:keep-all;}
   .hero-brand{text-align:center; padding:26px var(--pad-x) 18px;}
   .hero-brand h1{font-family:var(--f-kr-serif); font-weight:600; font-size:var(--fs-hero); letter-spacing:var(--ls-display); line-height:1.15; text-transform:uppercase;}
   .hero-brand .sub{display:block; font-family:var(--f-en-serif); font-style:italic; font-weight:600; font-size:17px; color:var(--c-text-muted); margin-top:2px;}
@@ -311,6 +311,9 @@
     .price-cols{max-width:480px; margin:0 auto;}
     .svc-grid{display:grid; grid-template-columns:1fr 1fr; gap:32px 40px;}
     .svc-item{margin-bottom:0;}
+    .hero-media-cap{padding:34px 26px 22px;}
+    .hero-media-cap .hmc-title{font-size:13px;}
+    .hero-media-cap .hmc-body{font-size:11px; max-width:38ch;}
   }
   @media (min-width:1024px){
     :root{
@@ -357,8 +360,8 @@
       <div class="hero-media">
         <img src="images/hero/hero.jpg" alt="보그헤어 응암역점" onerror="this.parentElement.style.background='var(--c-muted)'; this.remove();">
         <div class="hero-media-cap">
-          <p class="hmc-title">은평구 응암동 헤어살롱, Color Your Life — 보그헤어</p>
-          <p class="hmc-body">보그헤어 응암역점은 서울 은평구 응암동에 위치한 프리미엄 헤어살롱으로, 모발 진단부터 스타일 제안까지 1:1 맞춤 상담을 제공합니다.<br>서울 은평구 은평로 94, 2층 · 응암역 4번 출구에서 227m</p>
+          <p class="hmc-title">은평구 응암동 헤어살롱<br>Color Your Life — 보그헤어</p>
+          <p class="hmc-body">보그헤어 응암역점은 서울 은평구 응암동에 위치한 프리미엄 헤어살롱으로, 모발 진단부터 스타일 제안까지 1:1 맞춤 상담을 제공합니다.<br>서울 은평구 은평로 94, 2층<br>응암역 4번 출구에서 227m</p>
         </div>
       </div>
       <div class="hero-brand reveal">
